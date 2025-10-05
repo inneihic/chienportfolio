@@ -504,53 +504,52 @@
             }
         }
 
-            .section-title {
-    text-align: center;
-    font-size: 2.5em;
-    margin-bottom: 40px;
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    /* Thêm hiệu ứng màu chạy: gradient di chuyển */
-    background: linear-gradient(90deg, #ff6b35, #f7931e, #ffd23f, #ff6b35);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: colorRun 3s linear infinite;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Giữ shadow gốc */
-}
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-image: url('animated-text-fill.png');
+            background-repeat: repeat-x; /* Lặp ngang để pattern sọc chạy liên tục */
+            background-size: 200% 100%; /* Kích thước lớn để animation di chuyển mượt (chỉnh nếu cần) */
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; /* Làm chữ trong suốt để hiện image */
+            color: transparent; /* Fallback cho chữ trong suốt */
+    
+            animation: stripeSlide 4s linear infinite; /* 4s/lần, chỉnh thời gian nếu muốn nhanh/chậm */
+        }
 
-.section-title:hover {
-    transform: scale(1.05);
-    text-shadow: 0 0 20px rgba(79, 172, 254, 0.5); /* Giữ hover gốc */
-    /* Tạm dừng animation khi hover để tránh rối */
-    animation-play-state: paused;
-}
+        .section-title:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+        }
 
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, #4facfe, transparent);
-    border-radius: 2px; /* Giữ underline gốc */
-}
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #4facfe, transparent);
+            border-radius: 2px; 
+        }
 
-/* Thêm keyframes cho animation (nếu chưa có) */
-@keyframes colorRun {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 200% 50%;
-    }
-}
+        @keyframes stripeSlide {
+            0% {
+                background-position-x: 0%; /* Bắt đầu từ trái */
+            }
+            100% {
+                background-position-x: -100%; /* Di chuyển sang phải (dịch chuyển toàn bộ width) */
+            }
+        }
 
         /* Mooncake falling animation */
         .mooncake {
@@ -773,27 +772,6 @@
         @media (max-width: 480px) {
             .stats-section {
                 grid-template-columns: 1fr;
-            }
-        }
-        .exercise-list-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            background: linear-gradient(90deg, #ff6b35, #f7931e, #ffd23f, #ff6b35);
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: colorRun 3s linear infinite;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        @keyframes colorRun {
-            0% {
-                background-position: 0% 50%;
-            }
-            100% {
-                background-position: 200% 50%;
             }
         }
     </style>
