@@ -515,14 +515,14 @@
             cursor: pointer;
             transition: all 0.3s ease;
             background-image: url('animated-text-fill.png');
-            background-repeat: repeat-x; /* Lặp ngang để pattern sọc chạy liên tục */
-            background-size: 200% 100%; /* Kích thước lớn để animation di chuyển mượt (chỉnh nếu cần) */
+            background-repeat: repeat-x;
+            background-size: 200% 100%; 
             background-clip: text;
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; /* Làm chữ trong suốt để hiện image */
-            color: transparent; /* Fallback cho chữ trong suốt */
+            -webkit-text-fill-color: transparent; 
+            color: transparent;
     
-            animation: stripeSlide 4s linear infinite; /* 4s/lần, chỉnh thời gian nếu muốn nhanh/chậm */
+            animation: stripeSlide 12s linear infinite; /* 4s/lần, chỉnh thời gian nếu muốn nhanh/chậm */
         }
 
         .section-title:hover {
