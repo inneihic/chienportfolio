@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Sinh Viên</title>
+    <title>Portfolio Võ Lê Minh Chiến</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,12 +14,66 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364, #1a2a6c, #0d1b2a 100%);
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 25%, #2c5364 50%, #1a2a6c 75%, #0d1b2a 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             padding: 20px;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f2027, #203a43);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top: 5px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2em;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        /* Canvas for particles */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
 
         @keyframes gradientShift {
@@ -28,12 +82,118 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Smooth Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #00f2fe, #4facfe, #f093fb);
+            z-index: 1000;
+            transition: width 0.2s ease;
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1a2a6c, #2c5364);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Profile Section */
+        /* Stats Counter Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #4facfe;
+            text-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .stat-icon {
+            font-size: 2em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        /* Profile Section with 3D tilt */
         .profile-section {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
@@ -44,6 +204,24 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.5s ease;
             animation: fadeInDown 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-section::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, transparent 50%);
+            transition: all 0.5s ease;
+        }
+
+        .profile-section:hover::before {
+            top: -50%;
+            left: -50%;
         }
 
         @keyframes fadeInDown {
@@ -67,6 +245,8 @@
             align-items: center;
             gap: 50px;
             flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
         }
 
         .profile-image {
@@ -96,9 +276,26 @@
             transition: all 0.5s ease;
         }
 
+        .image-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(79, 172, 254, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-wrapper:hover::before {
+            opacity: 1;
+        }
+
         .image-wrapper:hover {
             transform: scale(1.1) rotate(5deg);
-            border-color: rgba(255, 255, 255, 0.8);
+            border-color: rgba(79, 172, 254, 0.8);
+            box-shadow: 0 0 40px rgba(79, 172, 254, 0.5);
         }
 
         .image-wrapper img {
@@ -107,7 +304,6 @@
             object-fit: cover;
         }
 
-        /* Placeholder để thêm ảnh */
         .image-placeholder {
             width: 100%;
             height: 100%;
@@ -117,6 +313,35 @@
             justify-content: center;
             font-size: 60px;
             color: white;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .social-link:hover {
+            background: rgba(79, 172, 254, 0.3);
+            border-color: #4facfe;
+            transform: translateY(-5px) rotate(360deg);
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
         }
 
         .profile-info {
@@ -139,31 +364,53 @@
         .profile-info h1 {
             color: white;
             font-size: 2.5em;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        /* Typing effect */
+        .typing-text {
+            display: inline-block;
+            border-right: 3px solid #4facfe;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: #4facfe; }
+            51%, 100% { border-color: transparent; }
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            font-style: italic;
         }
 
         .info-item {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             padding: 15px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             transition: all 0.3s ease;
             cursor: pointer;
+            border-left: 3px solid transparent;
         }
 
         .info-item:hover {
             background: rgba(255, 255, 255, 0.25);
             transform: translateX(10px);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border-left-color: #4facfe;
         }
 
         .info-item i {
             font-size: 24px;
-            color: #fff;
+            color: #4facfe;
             width: 30px;
             text-align: center;
             transition: all 0.3s ease;
@@ -177,6 +424,67 @@
             color: white;
             font-size: 1.1em;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search and Filter */
+        .search-section {
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease 0.7s backwards;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: white;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-box:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(79, 172, 254, 0.3);
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
         }
 
         /* Assignments Section */
@@ -201,12 +509,55 @@
             font-size: 2.5em;
             margin-bottom: 40px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-            animation: pulse 2s ease infinite;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .section-title:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #4facfe, transparent);
+            border-radius: 2px;
+        }
+
+        /* Mooncake falling animation */
+        .mooncake {
+            position: fixed;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 999;
+            animation: fall linear forwards;
+            opacity: 0;
+        }
+
+        @keyframes fall {
+            0% {
+                opacity: 0;
+                transform: translateY(0) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(360deg);
+            }
         }
 
         .assignments-grid {
@@ -225,6 +576,22 @@
             cursor: pointer;
             overflow: hidden;
             animation: fadeIn 0.6s ease backwards;
+            position: relative;
+        }
+
+        .assignment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .assignment-card:hover::before {
+            left: 100%;
         }
 
         @keyframes fadeIn {
@@ -252,12 +619,15 @@
         .assignment-card:nth-child(12) { animation-delay: 1.2s; }
         .assignment-card:nth-child(13) { animation-delay: 1.3s; }
         .assignment-card:nth-child(14) { animation-delay: 1.4s; }
-        .assignment-card:nth-child(15) { animation-delay: 1.5s; }
+
+        .assignment-card.hidden {
+            display: none;
+        }
 
         .assignment-card:hover {
             transform: translateY(-10px) scale(1.03);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3), 0 0 30px rgba(79, 172, 254, 0.2);
+            border-color: rgba(79, 172, 254, 0.5);
         }
 
         .card-header {
@@ -267,10 +637,11 @@
             align-items: center;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .assignment-card:hover .card-header {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(79, 172, 254, 0.1));
         }
 
         .card-title {
@@ -288,6 +659,7 @@
 
         .assignment-card.expanded .expand-icon {
             transform: rotate(180deg);
+            color: #4facfe;
         }
 
         .card-content {
@@ -313,11 +685,31 @@
             transition: all 0.3s ease;
             font-weight: 600;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .assignment-link::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+        }
+
+        .assignment-link:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .assignment-link:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(79, 172, 254, 0.4);
             background: linear-gradient(135deg, #2c5364 0%, #1a2a6c 100%);
         }
 
@@ -325,28 +717,6 @@
             color: rgba(255, 255, 255, 0.7);
             font-style: italic;
             margin-top: 10px;
-        }
-
-        /* Floating particles */
-        .particle {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: float 3s ease-in-out infinite;
-            z-index: -1;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
         }
 
         /* Responsive */
@@ -371,23 +741,78 @@
             .assignments-grid {
                 grid-template-columns: 1fr;
             }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+        <div class="loading-text">Đang tải...</div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Particles Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
     <div class="container">
+        <!-- Stats Counter Section -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-code"></i></div>
+                <div class="stat-number" data-target="14">0</div>
+                <div class="stat-label">Bài Tập Hoàn Thành</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                <div class="stat-number" data-target="100">0</div>
+                <div class="stat-label">% Tiến Độ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <div class="stat-number" data-target="4">0</div>
+                <div class="stat-label">Năm Học</div>
+            </div>
+        </div>
+
         <!-- Profile Section -->
         <div class="profile-section">
             <div class="profile-content">
                 <div class="profile-image">
                     <div class="image-wrapper">
-                        <!-- THAY ẢNH CỦA BẠN Ở ĐÂY -->
                         <img src="self.jpg" alt="Profile Picture" onerror="this.parentElement.innerHTML='<div class=\'image-placeholder\'><i class=\'fas fa-user\'></i></div>'">
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="mailto:vlmchien05@gmail.com" class="social-link" title="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
                 <div class="profile-info">
-                    <h1>Giới Thiệu Bản Thân</h1>
-                    <!-- CHỈNH SỬA THÔNG TIN CÁ NHÂN Ở ĐÂY -->
+                    <h1><span class="typing-text" id="typingText"></span></h1>
+                    <p class="subtitle">Sinh viên Kỹ thuật Dữ liệu | Web Developer</p>
                     <div class="info-item">
                         <i class="fas fa-user"></i>
                         <span>Họ và tên: Võ Lê Minh Chiến</span>
@@ -398,7 +823,7 @@
                     </div>
                     <div class="info-item">
                         <i class="fas fa-university"></i>
-                        <span>Trường: Đại học Sư phạm Kỹ Thuật - Thành phố Hồ Chí Minh</span>
+                        <span>Trường: ĐH Sư phạm Kỹ Thuật TP.HCM</span>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-id-card"></i>
@@ -412,13 +837,22 @@
             </div>
         </div>
 
+        <!-- Search and Filter Section -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Tìm kiếm bài tập...">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Tất cả</button>
+                    <button class="filter-btn" data-filter="completed">Đã hoàn thành</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Assignments Section -->
         <div class="assignments-section">
             <h2 class="section-title">Danh Sách Bài Tập</h2>
-            <div class="assignments-grid">
-                <!-- Bài tập 1-15 -->
-                <!-- THÊM LINK BÀI TẬP VÀO href="YOUR_LINK_HERE" -->
-                <div class="assignment-card" onclick="toggleCard(this)">
+            <div class="assignments-grid" id="assignmentsGrid">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 1</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -431,7 +865,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 2</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -444,7 +878,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 3</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -457,7 +891,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 4</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -470,7 +904,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 5</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -483,7 +917,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 6</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -496,7 +930,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 7</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -509,7 +943,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 8</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -522,7 +956,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 9</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -535,7 +969,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 10</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -548,7 +982,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 11</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -561,7 +995,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 12</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -574,7 +1008,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 13</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -587,7 +1021,7 @@
                     </div>
                 </div>
 
-                <div class="assignment-card" onclick="toggleCard(this)">
+                <div class="assignment-card" data-category="completed" onclick="toggleCard(this)">
                     <div class="card-header">
                         <h3 class="card-title">Bài tập 14</h3>
                         <i class="fas fa-chevron-down expand-icon"></i>
@@ -604,7 +1038,138 @@
     </div>
 
     <script>
-        // Toggle card expansion
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1000);
+        });
+
+        // Typing Effect
+        const text = "Giới Thiệu Bản Thân";
+        const typingElement = document.getElementById('typingText');
+        let charIndex = 0;
+
+        function typeText() {
+            if (charIndex < text.length) {
+                typingElement.textContent += text.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeText, 100);
+            }
+        }
+
+        setTimeout(typeText, 1500);
+
+        // Counter Animation
+        const counters = document.querySelectorAll('.stat-number');
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.dataset.target);
+                    animateCounter(entry.target, target);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        counters.forEach(counter => counterObserver.observe(counter));
+
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 30);
+        }
+
+        // Scroll Progress Bar
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            scrollProgress.style.width = progress + '%';
+
+            // Back to Top Button
+            const backToTop = document.getElementById('backToTop');
+            if (scrollTop > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        // Back to Top
+        document.getElementById('backToTop').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Particles Animation
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(79, 172, 254, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Card Toggle
         function toggleCard(card) {
             const allCards = document.querySelectorAll('.assignment-card');
             allCards.forEach(c => {
@@ -615,31 +1180,105 @@
             card.classList.toggle('expanded');
         }
 
-        // Create floating particles
-        function createParticle(x, y) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = x + 'px';
-            particle.style.top = y + 'px';
-            particle.style.animationDelay = Math.random() * 0.5 + 's';
-            document.body.appendChild(particle);
+        // Mooncake falling effect
+        const sectionTitle = document.querySelector('.section-title');
+        let mooncakeInterval;
+        let isHovering = false;
 
+        function createMooncake() {
+            const mooncake = document.createElement('div');
+            mooncake.className = 'mooncake';
+            mooncake.textContent = '🥮';
+            
+            // Random horizontal position
+            const startX = Math.random() * window.innerWidth;
+            mooncake.style.left = startX + 'px';
+            mooncake.style.top = '-30px';
+            
+            // Random animation duration (slower falling)
+            const duration = Math.random() * 3 + 4; // 4-7 seconds
+            mooncake.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(mooncake);
+            
+            // Remove after animation
             setTimeout(() => {
-                particle.remove();
-            }, 3000);
+                mooncake.remove();
+            }, duration * 1000);
         }
 
-        // Mouse move effect
-        document.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.95) {
-                createParticle(e.clientX, e.clientY);
-            }
+        sectionTitle.addEventListener('mouseenter', () => {
+            isHovering = true;
+            // Create mooncakes every 800ms (sparse)
+            mooncakeInterval = setInterval(() => {
+                if (isHovering) {
+                    createMooncake();
+                }
+            }, 800);
+            // Create first one immediately
+            createMooncake();
+        });
+
+        sectionTitle.addEventListener('mouseleave', () => {
+            isHovering = false;
+            clearInterval(mooncakeInterval);
+        });
+
+        // Search Functionality
+        const searchBox = document.getElementById('searchBox');
+        searchBox.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.assignment-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const desc = card.querySelector('.link-placeholder').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || desc.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+
+        // Filter Functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+                const cards = document.querySelectorAll('.assignment-card');
+
+                cards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
         });
 
         // Prevent link click from toggling card
         document.querySelectorAll('.assignment-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.stopPropagation();
+            });
+        });
+
+        // Smooth scroll for all internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
     </script>
