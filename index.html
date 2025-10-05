@@ -1238,6 +1238,100 @@
         }
 
         // Mooncake falling effect
+        const MAX_MOONCAKES = 10; // Limit concurrent mooncakes to prevent DOM overload
+let mooncakePool = []; // Pool for reusing elements
+let activeMooncakes = new Set(); // Track active instances
+let animationId;
+let lastCreationTime = 0;
+const CREATION_INTERVAL = 800; // ms between creations
+
+function getPooledMooncake() {
+    // Reuse from pool if available, otherwise create new
+    if (mooncakePool.length > 0) {
+        const mooncake = mooncakePool.pop();
+        mooncake.style.display = 'block';
+        return mooncake;
+    }
+    const mooncake = document.createElement('div');
+    mooncake.className = 'mooncake';
+    mooncake.textContent = '🥮';
+    // Ensure CSS animation uses transform for GPU acceleration (add to CSS if not: will-change: transform;)
+    return mooncake;
+}
+
+function releaseMooncake(mooncake) {
+    // Reset and pool for reuse
+    mooncake.style.display = 'none';
+    mooncake.style.left = '';
+    mooncake.style.top = '';
+    mooncake.style.animationDuration = '';
+    activeMooncakes.delete(mooncake);
+    mooncakePool.push(mooncake);
+}
+
+function createMooncake() {
+    if (activeMooncakes.size >= MAX_MOONCAKES) return; // Skip if max reached
+
+    const mooncake = getPooledMooncake();
+    
+    // Random horizontal position
+    const startX = Math.random() * (window.innerWidth - 30); // Account for emoji width
+    mooncake.style.left = startX + 'px';
+    mooncake.style.top = '-30px';
+    
+    // Random animation duration (slower falling)
+    const duration = Math.random() * 3 + 4; // 4-7 seconds
+    mooncake.style.animationDuration = duration + 's';
+    
+    document.body.appendChild(mooncake);
+    activeMooncakes.add(mooncake);
+    
+    // Remove after animation using event listener for better perf (instead of setTimeout per instance)
+    const onAnimationEnd = () => {
+        mooncake.removeEventListener('animationend', onAnimationEnd);
+        releaseMooncake(mooncake);
+    };
+    mooncake.addEventListener('animationend', onAnimationEnd);
+}
+
+// Optimized loop using requestAnimationFrame
+function animationLoop(currentTime) {
+    // Throttle creation to interval
+    if (currentTime - lastCreationTime >= CREATION_INTERVAL) {
+        createMooncake();
+        lastCreationTime = currentTime;
+    }
+    animationId = requestAnimationFrame(animationLoop);
+}
+
+// Start the effect on page load
+function startMooncakeEffect() {
+    lastCreationTime = performance.now();
+    animationId = requestAnimationFrame(animationLoop);
+}
+
+// Stop if needed (e.g., on page unload)
+function stopMooncakeEffect() {
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+    }
+    // Clean up all active
+    activeMooncakes.forEach(mooncake => releaseMooncake(mooncake));
+    activeMooncakes.clear();
+}
+
+// Initialize
+startMooncakeEffect();
+
+// Optional: Handle window resize or visibility change for further perf
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        stopMooncakeEffect();
+    } else {
+        startMooncakeEffect();
+    }
+});
+        /*
         const sectionTitle = document.querySelector('.section-title');
         let mooncakeInterval;
         let isHovering = false;
@@ -1262,7 +1356,7 @@
             setTimeout(() => {
                 mooncake.remove();
             }, duration * 1000);
-        }
+        }*/
 
         sectionTitle.addEventListener('mouseenter', () => {
             isHovering = true;
